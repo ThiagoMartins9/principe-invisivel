@@ -1520,3 +1520,8 @@ textarea{ resize: vertical; min-height: 80px; font-family: var(--serif); font-si
 .top-bar .brand{ display: none; }
 .top-bar .actions{ flex: 1; justify-content: space-between; gap: 4px; }
 
+
+/* Bloqueio de zoom acidental no celular: elimina o atraso de 300ms do
+   double-tap, impede pinch-zoom e o zoom-on-input do iOS Safari. */
+html, body{ touch-action: manipulation; -webkit-text-size-adjust: 100%; }
+input, textarea, select{ font-size: 16px; }
