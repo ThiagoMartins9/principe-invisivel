@@ -1,6 +1,8 @@
 # Dependências
 node_modules/
-package-lock.json
+# IMPORTANTE: package-lock.json É versionado — o workflow do GitHub Pages
+# usa `npm ci` que exige o lockfile, e o cache de actions/setup-node também.
+# Mantenha sempre commitado.
 yarn.lock
 pnpm-lock.yaml
 
