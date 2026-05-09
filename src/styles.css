@@ -1515,3 +1515,8 @@ textarea{ resize: vertical; min-height: 80px; font-family: var(--serif); font-si
 
 /* Sync-pill oculta — sincronização continua ativa, só não há indicador visual */
 .sync-pill{ display: none !important; }
+/* Top-bar sem sync-pill: brand vira invisível e os 7 ícones se
+   distribuem uniformemente em toda a largura da barra. */
+.top-bar .brand{ display: none; }
+.top-bar .actions{ flex: 1; justify-content: space-between; gap: 4px; }
+
