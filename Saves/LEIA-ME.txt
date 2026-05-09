@@ -1,0 +1,3 @@
+Esta pasta guarda as Crônicas exportadas pelo app O Príncipe Invisível.
+Cada save é nomeado cronica-YYYY-MM-DD-HHMM.json.
+O arquivo cronica-latest.json é sempre a última versão sobrescrita.

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!--
+    Variante "maskable" — sem cantos arredondados, full-bleed.
+    O conteúdo (coroa + círculo decorativo) cabe dentro da safe zone
+    de 80% do canvas (raio 204.8 do centro 256), conforme spec
+    https://web.dev/maskable-icon/. Sistemas operacionais aplicam
+    máscaras circulares/squircle/quadradas e cortam o que estiver
+    fora — esta versão garante que o brasão não seja amputado.
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F1B2D"/>
+      <stop offset="100%" stop-color="#0A1628"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5DA8A"/>
+      <stop offset="55%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#9B7A23"/>
+    </linearGradient>
+  </defs>
+  <!-- fundo full-bleed (rx=0) -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- círculo decorativo: raio 168 (< 204.8 da safe zone) -->
+  <circle cx="256" cy="256" r="168" fill="none" stroke="url(#gold)" stroke-width="6"/>
+  <!-- coroa centralizada, ligeiramente reduzida para caber na safe zone -->
+  <g transform="translate(256 268) scale(0.95)">
+    <path d="M-90 -10 L-60 -70 L-30 -25 L0 -85 L30 -25 L60 -70 L90 -10 L78 60 L-78 60 Z"
+          fill="url(#gold)" stroke="#7B5E1A" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="-60" cy="-70" r="9" fill="#C13B3B" stroke="#7B5E1A" stroke-width="2"/>
+    <circle cx="0"   cy="-85" r="11" fill="#3B6EC1" stroke="#7B5E1A" stroke-width="2"/>
+    <circle cx="60"  cy="-70" r="9" fill="#3B8C58" stroke="#7B5E1A" stroke-width="2"/>
+    <rect x="-78" y="40" width="156" height="20" fill="url(#gold)" stroke="#7B5E1A" stroke-width="2"/>
+  </g>
+</svg>
