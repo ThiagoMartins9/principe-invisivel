@@ -1512,3 +1512,6 @@ textarea{ resize: vertical; min-height: 80px; font-family: var(--serif); font-si
   .chronicle .ch-head h2{ font-size: 22px; }
   .chronicle .ch-lead{ font-size: 17px; }
 }
+
+/* Sync-pill oculta — sincronização continua ativa, só não há indicador visual */
+.sync-pill{ display: none !important; }

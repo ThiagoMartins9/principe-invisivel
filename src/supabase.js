@@ -183,7 +183,8 @@ function sbSubscribeRealtime(){
         migrate();
         renderAll();
         setApplyingRemote(false);
-        toast("Atualizado de outro dispositivo");
+        // toast removido — sync silencioso a pedido do usuário
+        // toast("Atualizado de outro dispositivo");
       }
     })
     .subscribe();
