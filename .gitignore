@@ -1,0 +1,37 @@
+# Dependências
+node_modules/
+# IMPORTANTE: package-lock.json É versionado — o workflow do GitHub Pages
+# usa `npm ci` que exige o lockfile, e o cache de actions/setup-node também.
+# Mantenha sempre commitado.
+yarn.lock
+pnpm-lock.yaml
+
+# Caches de build/test
+dist/
+.vite/
+coverage/
+.DS_Store
+
+# Arquivos temporários do Vitest (criados a cada execução de testes)
+*.timestamp-*.mjs
+vitest.config.js.timestamp-*
+vite.config.js.timestamp-*
+
+# O index.html da raiz é o BUILD do Vite (single-file pra rodar em file://).
+# Versioná-lo é redundante: é regenerado por `npm run build`. Se você prefere
+# tê-lo no histórico (para abrir o app sem dependências node), comente a linha
+# abaixo. Por padrão, ignoramos.
+# index.html
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Saves locais (Crônicas pessoais — NÃO devem ir para o repo)
+Saves/cronica-*.json
+!Saves/LEIA-ME.txt
+
+# Backup do monoarquivo legado (manter localmente, fora do git)
+legacy/

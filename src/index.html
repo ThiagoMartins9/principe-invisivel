@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover" />
+<meta name="theme-color" content="#0A1628" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>O Príncipe Invisível</title>
+<link rel="manifest" href="./manifest.json" />
+<link rel="icon" type="image/svg+xml" href="./icon.svg" />
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+<style>
+  /* Fontes auto-hospedadas (subset latin) — funciona offline desde a primeira
+     carga e dispensa fonts.googleapis.com / fonts.gstatic.com.
+     Os WOFF2 são pré-cacheados pelo service-worker.js. */
+  @font-face{font-family:"Cinzel";font-style:normal;font-weight:500;font-display:swap;
+    src:url("./assets/fonts/cinzel-latin-500-normal.woff2") format("woff2")}
+  @font-face{font-family:"Cinzel";font-style:normal;font-weight:600;font-display:swap;
+    src:url("./assets/fonts/cinzel-latin-600-normal.woff2") format("woff2")}
+  @font-face{font-family:"Cinzel";font-style:normal;font-weight:700;font-display:swap;
+    src:url("./assets/fonts/cinzel-latin-700-normal.woff2") format("woff2")}
+
+  @font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:400;font-display:swap;
+    src:url("./assets/fonts/cormorant-garamond-latin-400-normal.woff2") format("woff2")}
+  @font-face{font-family:"Cormorant Garamond";font-style:italic;font-weight:400;font-display:swap;
+    src:url("./assets/fonts/cormorant-garamond-latin-400-italic.woff2") format("woff2")}
+  @font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:500;font-display:swap;
+    src:url("./assets/fonts/cormorant-garamond-latin-500-normal.woff2") format("woff2")}
+  @font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:600;font-display:swap;
+    src:url("./assets/fonts/cormorant-garamond-latin-600-normal.woff2") format("woff2")}
+
+  @font-face{font-family:"Inter";font-style:normal;font-weight:400;font-display:swap;
+    src:url("./assets/fonts/inter-latin-400-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter";font-style:normal;font-weight:500;font-display:swap;
+    src:url("./assets/fonts/inter-latin-500-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter";font-style:normal;font-weight:600;font-display:swap;
+    src:url("./assets/fonts/inter-latin-600-normal.woff2") format("woff2")}
+  @font-face{font-family:"Inter";font-style:normal;font-weight:700;font-display:swap;
+    src:url("./assets/fonts/inter-latin-700-normal.woff2") format("woff2")}
+</style>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app" id="app">
+
+    <!-- ============== TOP BAR ============== -->
+    <div class="top-bar">
+      <div class="brand">
+        <span class="sync-pill" id="syncPill" data-state="offline" title="Sem sincronização">
+          <span class="sync-dot"></span>
+          <span class="sync-label">offline</span>
+        </span>
+      </div>
+      <div class="actions">
+        <button class="icon-btn" id="btnAuth" title="Sincronizar / Conta" aria-label="Conta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+        </button>
+        <button class="icon-btn" id="btnArchive" title="Arquivo de missões" aria-label="Arquivo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="5" rx="1"/><path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+        </button>
+        <button class="icon-btn" id="btnChronicles" title="Crônicas mensais" aria-label="Crônicas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/></svg>
+        </button>
+        <button class="icon-btn" id="btnSound" title="Som on/off" aria-label="Som">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        </button>
+        <button class="icon-btn" id="btnExport" title="Exportar Crônica (Shift=trocar pasta · Alt=cifrar)" aria-label="Exportar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        </button>
+        <button class="icon-btn" id="btnImport" title="Restaurar Crônica" aria-label="Restaurar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M5 3h14"/></svg>
+        </button>
+        <button class="icon-btn" id="btnReset" title="Reiniciar" aria-label="Reiniciar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============== HEADER / PERFIL ============== -->
+    <header class="profile">
+      <div class="crest" id="crest" aria-hidden="true">
+        <img id="crestImg" alt="" />
+        <svg id="crestFallback" class="crest-fallback" viewBox="0 0 64 64" fill="none">
+          <defs>
+            <linearGradient id="cgold" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#F5DA8A"/>
+              <stop offset="55%" stop-color="#D4AF37"/>
+              <stop offset="100%" stop-color="#9B7A23"/>
+            </linearGradient>
+          </defs>
+          <path d="M10 24 L18 12 L26 22 L32 8 L38 22 L46 12 L54 24 L50 44 L14 44 Z"
+                fill="url(#cgold)" stroke="#7B5E1A" stroke-width="1.4" stroke-linejoin="round"/>
+          <circle cx="18" cy="12" r="2.2" fill="#C13B3B" stroke="#7B5E1A" stroke-width=".8"/>
+          <circle cx="32" cy="8"  r="2.6" fill="#3B6EC1" stroke="#7B5E1A" stroke-width=".8"/>
+          <circle cx="46" cy="12" r="2.2" fill="#3B8C58" stroke="#7B5E1A" stroke-width=".8"/>
+          <rect x="14" y="42" width="36" height="5" fill="url(#cgold)" stroke="#7B5E1A" stroke-width="1"/>
+        </svg>
+      </div>
+      <h1 class="title" id="rankTitle">O SEM NOME</h1>
+      <p class="subtitle"><b id="levelLabel">Nível 1</b> — <span id="rankEssence">Você existe, mas ninguém sabe ainda</span></p>
+      <div class="xp-rail"><div class="xp-fill" id="xpFill"></div></div>
+      <div class="stats">
+        <div>Próxima patente em: <b id="xpRemain">50 XP</b></div>
+        <div>Domínio do Continente: <b id="dominionLabel">0/40</b></div>
+        <div>Missões cumpridas: <b id="missionsDone">0</b></div>
+        <div>Sequência (dias): <b id="streakLabel">0</b></div>
+        <div class="xp-num">
+          <span class="label">XP</span>
+          <span class="num" id="xpTotal">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============== TELA: HOJE (DASHBOARD) ============== -->
+    <section id="screen-today" class="hide">
+      <div class="divider"></div>
+      <div class="section-title">Hoje</div>
+      <div class="section-sub">O expediente do Conselheiro neste dia</div>
+      <p class="today-date" id="todayDate"></p>
+      <div class="today-summary">
+        <div id="todayBoxOverdue"><b id="todayPendingCount">0</b>pendentes</div>
+        <div><b id="todayDoneCount">0</b>concluídas hoje</div>
+        <div><b id="todayXpToday">0</b>XP hoje</div>
+      </div>
+      <div id="todayList"></div>
+      <div class="week-chart" id="weekChartHost">
+        <h4>Últimos 7 dias · Selos por Categoria</h4>
+        <div id="weekChartSvg"></div>
+        <div class="week-legend">
+          <span class="leg"><span class="swatch razao"></span>Razão de Estado</span>
+          <span class="leg"><span class="swatch virtu"></span>Círculo de Virtù</span>
+          <span class="leg"><span class="swatch armas"></span>Minhas Armas</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== TELA: RAZÃO / VIRTÙ / ARMAS ============== -->
+    <section id="screen-list">
+      <!-- [P3.6] Banner discreto quando há missões arquivadas -->
+      <div class="archive-banner hide" id="archiveBanner">
+        <span class="ic">📦</span>
+        <span><b id="archiveBannerCount">0</b> missões antigas arquivadas</span>
+        <button id="archiveBannerOpen">Ver Arquivo</button>
+      </div>
+      <div class="divider"></div>
+      <div class="section-title" id="sectionTitle">Razão de Estado</div>
+      <div class="section-sub" id="sectionSub">As tarefas do Gabinete. O expediente do Rei.</div>
+
+      <button class="register" id="btnNewMission">+ Registrar Nova Missão</button>
+
+      <div class="list-filters">
+        <div class="search-row">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="searchInput" type="text" placeholder="Buscar por título ou descrição…" autocomplete="off" />
+          <button class="clear" id="searchClear" aria-label="Limpar busca" title="Limpar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+        <div class="filter-tags" id="filterTags"></div>
+      </div>
+
+      <div class="tabs">
+        <button data-filter="pending"  class="active">Pendentes <span class="tab-count" id="countPending">0</span></button>
+        <button data-filter="done">Concluídas <span class="tab-count" id="countDone">0</span></button>
+        <button data-filter="all">Todas <span class="tab-count" id="countAll">0</span></button>
+      </div>
+
+      <div id="missionList"></div>
+    </section>
+
+    <!-- ============== TELA: MAPA ============== -->
+    <section id="screen-map" class="hide">
+      <div class="divider"></div>
+      <div class="section-title">O Continente</div>
+      <div class="section-sub">A pintura do Reino se estende a cada vitória do Conselheiro.</div>
+      <div class="map-wrap">
+        <div id="mapHost"></div>
+      </div>
+      <div class="map-meta">
+        <span>Domínio: <b id="mapDominion">0 / 40</b></span>
+        <span>Inércia: <b id="mapInertia">0 dia(s) sem missão</b></span>
+      </div>
+      <div class="chronicles">
+        <h4>Crônica do Mapa</h4>
+        <p>
+          Cada missão concluída pinta uma região com a cor do Rei. Sequências (streaks) e diversidade
+          de áreas (Razão, Virtù, Armas no mesmo dia) expandem o domínio com mais força.
+          Sem missões, a inércia rói o controle: a cada dia parado, uma região retorna ao neutro.
+        </p>
+      </div>
+      <div class="chronicles">
+        <h4>Patentes do Conselho</h4>
+        <ul class="ranks" id="ranksList"></ul>
+      </div>
+    </section>
+
+    <!-- ============== TELA: BATALHA ============== -->
+    <section id="screen-battle" class="hide">
+      <div class="divider"></div>
+      <div class="section-title">Disputa Política</div>
+      <div class="section-sub">Pomodoro de Batalha — concentre-se e o Reino te recompensará.</div>
+      <div class="battle">
+        <div class="battle-ring" id="ring" style="--p:0">
+          <div class="battle-time" id="ringTime">25:00</div>
+          <div class="battle-phase" id="ringPhase">Foco</div>
+        </div>
+        <div class="battle-task" id="battleTask">Nenhuma missão vinculada à batalha.</div>
+        <div class="seg" id="phasePicker" aria-label="Modo de batalha">
+          <button data-min="15">Vigília 15'</button>
+          <button data-min="25" class="active">Foco 25'</button>
+          <button data-min="50">Cerco 50'</button>
+          <button data-min="5">Trégua 5'</button>
+        </div>
+        <div class="battle-controls">
+          <button class="btn ghost" id="btnLink">Vincular missão</button>
+          <button class="btn gold" id="btnStart">Iniciar Batalha</button>
+          <button class="btn" id="btnAbort">Render-se</button>
+        </div>
+        <div class="chronicles">
+          <h4>Doutrina da Batalha</h4>
+          <p>
+            Concluir o Pomodoro inteiro: <b style="color:var(--gold-soft)">×1.5 XP</b> na missão vinculada.
+            Concluir a missão durante a batalha: <b style="color:var(--gold-soft)">×2 XP</b>.
+            Render-se antes do tempo: nenhum bônus, apenas a lembrança.
+          </p>
+          <div class="vigor" id="vigorPips" title="Vigor remanescente"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== TELA: ARQUIVO (P3.6) ============== -->
+    <section id="screen-archive" class="hide">
+      <div class="divider"></div>
+      <div class="section-title">Arquivo</div>
+      <div class="section-sub">Pergaminhos selados há mais de 90 dias, guardados na arca</div>
+
+      <div class="archive-actions">
+        <button class="btn ghost" id="archiveBack">← Voltar</button>
+        <button class="btn" id="archiveExport">Exportar Arquivo</button>
+      </div>
+
+      <div class="list-filters">
+        <div class="search-row">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="archiveSearch" type="text" placeholder="Buscar no arquivo…" autocomplete="off" />
+        </div>
+      </div>
+
+      <div id="archiveList"></div>
+      <div class="archive-empty hide" id="archiveEmpty">A arca ainda está vazia.</div>
+    </section>
+
+    <!-- ============== TELA: CRÔNICAS (P5) ============== -->
+    <section id="screen-chronicles" class="hide">
+      <div class="divider"></div>
+      <div class="section-title">Crônicas</div>
+      <div class="section-sub">Registro narrado da carreira do Conselheiro, mês a mês</div>
+
+      <div class="archive-actions">
+        <button class="btn ghost" id="chroniclesBack">← Voltar</button>
+      </div>
+
+      <div id="chroniclesList" class="chronicles-list"></div>
+      <div class="archive-empty hide" id="chroniclesEmpty">Ainda não há crônicas. Sele alguns pergaminhos e volte aqui.</div>
+    </section>
+
+    <!-- ============== TELA: LEITURA DE CRÔNICA (P5) ============== -->
+    <section id="screen-chronicle-read" class="hide">
+      <div class="archive-actions">
+        <button class="btn ghost" id="chronicleReadBack">← Voltar às crônicas</button>
+      </div>
+      <div id="chronicleReadHost" class="chronicle-host"></div>
+    </section>
+
+  </main>
+
+  <!-- ============== BOTTOM NAVIGATION ============== -->
+  <nav class="nav" aria-label="Navegação principal">
+    <div class="nav-inner">
+      <button data-nav="today" class="">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        Hoje
+      </button>
+      <button data-nav="map" class="">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></svg>
+        Continente
+      </button>
+      <button data-nav="razao" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M5 6h14l-2 4H7z"/><path d="M7 10v5"/><path d="M17 10v5"/><path d="M3 18h18"/><path d="M3 21h18"/></svg>
+        Razão
+      </button>
+      <button data-nav="virtu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h11a3 3 0 0 1 3 3v13H9a3 3 0 0 1-3-3z"/><path d="M6 4a3 3 0 0 0-3 3v13"/><path d="M9 8h7"/><path d="M9 12h7"/></svg>
+        Virtù
+      </button>
+      <button data-nav="armas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4 4 14l3 3 10-10z"/><path d="m14 4 6 6"/><path d="m9 14-3 3-3-1 1-3z"/><path d="M14 14l6 6"/><path d="m17 17 3-1-1-3-3 1z"/></svg>
+        Armas
+      </button>
+      <button data-nav="battle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/><path d="m5 5 1.5-1.5"/><path d="m19 5-1.5-1.5"/></svg>
+        Batalha
+      </button>
+    </div>
+  </nav>
+
+  <!-- ============== MODAL: NOVA MISSÃO ============== -->
+  <div class="modal-bg" id="modalMission" role="dialog" aria-modal="true" aria-labelledby="missTitle">
+    <div class="modal">
+      <h2 id="missTitle">Nova Missão</h2>
+      <p class="lead">Defina a próxima empreitada do Conselheiro</p>
+
+      <label class="field-label">Categoria</label>
+      <div class="grid-3" id="catPicker">
+        <div class="pick" data-cat="razao"><div class="ic">⚖️</div><div class="nm">Razão de Estado</div></div>
+        <div class="pick" data-cat="virtu"><div class="ic">📜</div><div class="nm">Círculo de Virtù</div></div>
+        <div class="pick" data-cat="armas"><div class="ic">⚔️</div><div class="nm">Minhas Armas</div></div>
+      </div>
+
+      <label class="field-label">Peso da Missão</label>
+      <div class="grid-3" id="weightPicker">
+        <div class="pick" data-w="oficio"><div class="ic">🪶</div><div class="nm">Ofício</div><div class="ds">×0,5</div></div>
+        <div class="pick sel" data-w="empreitada"><div class="ic">⚔️</div><div class="nm">Empreitada</div><div class="ds">×1</div></div>
+        <div class="pick" data-w="facanha"><div class="ic">🏰</div><div class="nm">Façanha</div><div class="ds">×2</div></div>
+      </div>
+      <div class="xp-hint">XP estimado: <b id="xpHint">25</b> (antes de Vigor/Batalha)</div>
+
+      <label class="field-label">Título da Missão</label>
+      <input type="text" id="missionTitle" placeholder="Ex: Parecer sobre PL 459/2025" maxlength="120" />
+
+      <label class="field-label">Descrição (opcional)</label>
+      <textarea id="missionDesc" placeholder="Detalhes, cenários, interessados…" maxlength="600"></textarea>
+
+      <label class="field-label">Prazo</label>
+      <input type="date" id="missionDue" />
+
+      <label class="field-label">Recorrência</label>
+      <div class="recur-toggle" id="recurToggle" tabindex="0" role="switch" aria-checked="false">
+        <span class="left">
+          <span class="ic">↻</span>
+          <span>
+            <strong>Missão Recorrente</strong>
+            <small>Em vez de fechar o pergaminho, soma um selo a cada execução.</small>
+          </span>
+        </span>
+        <span class="switch"><span class="dot"></span></span>
+      </div>
+
+      <div class="cadence-block hide" id="cadenceBlock">
+        <label class="field-label">Cadência</label>
+        <div class="seg" id="cadenceTypePicker" aria-label="Tipo de cadência">
+          <button type="button" data-c="daily" class="active">Todo dia</button>
+          <button type="button" data-c="custom">Dias específicos</button>
+        </div>
+        <div class="day-picker hide" id="cadenceDaysPicker" aria-label="Dias da semana">
+          <button type="button" data-d="0" title="Domingo">D</button>
+          <button type="button" data-d="1" title="Segunda">S</button>
+          <button type="button" data-d="2" title="Terça">T</button>
+          <button type="button" data-d="3" title="Quarta">Q</button>
+          <button type="button" data-d="4" title="Quinta">Q</button>
+          <button type="button" data-d="5" title="Sexta">S</button>
+          <button type="button" data-d="6" title="Sábado">S</button>
+        </div>
+      </div>
+
+      <label class="field-label">Tag</label>
+      <div class="tag-row" id="tagPicker"></div>
+      <input type="text" id="newTag" placeholder="+ Nova tag (enter para adicionar)" />
+      <div class="small" style="margin-top:6px">Tags organizam missões por projeto, gabinete ou matéria.</div>
+
+      <div class="modal-actions">
+        <button class="btn ghost" id="btnCancel">Cancelar</button>
+        <button class="btn gold" id="btnSave">Selar Pergaminho</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODAL: VINCULAR MISSÃO ============== -->
+  <div class="modal-bg" id="modalLink" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2>Vincular Missão</h2>
+      <p class="lead">Escolha a missão pela qual o Conselheiro irá batalhar</p>
+      <div id="linkList" style="max-height:50vh; overflow:auto"></div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="btnLinkCancel">Cancelar</button>
+        <button class="btn gold" id="btnLinkClear">Sem missão</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== DETALHE DE MISSÃO ============== -->
+  <div class="modal-bg" id="modalDetail" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="detail-panel">
+      <div class="detail-head">
+        <input type="text" id="detailTitle" class="detail-title" maxlength="120" placeholder="Título da missão" />
+        <button class="detail-close" id="btnDetailClose" aria-label="Fechar" title="Fechar">×</button>
+      </div>
+      <div class="detail-meta" id="detailMeta"></div>
+      <textarea id="detailNotes" class="detail-notes" placeholder="Anotações, andamento, decisões, contatos…"></textarea>
+      <div class="detail-drop" id="detailDrop">
+        <span class="ic">📎</span>
+        <span>Arraste arquivos aqui ou <button type="button" class="link" id="btnDetailPick">selecione</button></span>
+        <small>Até 500 MB por arquivo · 500 MB no total por missão</small>
+        <input type="file" id="detailFiles" multiple class="hide" />
+      </div>
+      <div id="detailList" class="detail-list"></div>
+      <div class="detail-actions">
+        <span class="detail-status" id="detailStatus">Salvo</span>
+        <span class="small">Toque fora para fechar · ESC</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODAL DE AUTH ============== -->
+  <div class="modal-bg" id="modalAuth" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="auth-panel">
+      <h2 id="authTitle">Sincronização do Reino</h2>
+      <p class="lead" id="authLead">Acesse com seu e-mail para sincronizar entre dispositivos</p>
+      <div id="authLoggedOut">
+        <div class="auth-tabs" id="authTabs">
+          <button type="button" data-tab="signin" class="active">Entrar</button>
+          <button type="button" data-tab="signup">Criar conta</button>
+        </div>
+        <div class="auth-fields">
+          <label for="authEmail">E-mail</label>
+          <input id="authEmail" type="text" autocomplete="email" placeholder="seu@email.com" />
+          <label for="authPass">Senha</label>
+          <input id="authPass" type="password" autocomplete="current-password" placeholder="senha (mín. 8 caracteres)" />
+        </div>
+        <div class="auth-status" id="authStatus"></div>
+        <div class="auth-actions">
+          <button class="btn ghost" id="authCancel">Continuar offline</button>
+          <button class="btn gold" id="authSubmit">Entrar</button>
+        </div>
+        <div class="small" style="text-align:center; margin-top:10px; color:var(--muted-2)">
+          Tudo continua funcionando offline. O sync é apenas uma conveniência.
+        </div>
+      </div>
+      <div id="authLoggedIn" class="hide">
+        <div class="auth-account">
+          <span class="email" id="authAccountEmail">—</span>
+          <span class="small">Sincronização <b id="authSyncMode">automática</b> · região <b>São Paulo</b></span>
+        </div>
+        <div class="auth-actions">
+          <button class="btn ghost" id="authClose">Fechar</button>
+          <button class="btn danger" id="authSignOut">Sair da conta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODAL DE SENHA ============== -->
+  <div class="modal-bg" id="modalPassword" role="dialog" aria-modal="true" aria-labelledby="passTitle">
+    <div class="confirm-panel">
+      <h2 id="passTitle">Senha</h2>
+      <div class="msg" id="passMsg">Forneça uma senha para a Crônica.</div>
+      <input type="password" id="passInput" autocomplete="off" placeholder="senha…" />
+      <div class="small" id="passHint" style="text-align:center;margin-top:6px;color:var(--muted-2)">A senha NÃO fica salva no app. Sem ela, não há como recuperar.</div>
+      <div class="acts">
+        <button class="btn ghost" id="passCancel">Cancelar</button>
+        <button class="btn gold" id="passOk">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODAL DE CONFIRMAÇÃO ============== -->
+  <div class="modal-bg" id="modalConfirm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-panel">
+      <h2 id="confirmTitle">Confirmar</h2>
+      <div class="msg" id="confirmMsg">Tem certeza?</div>
+      <div class="acts">
+        <button class="btn ghost" id="confirmCancel">Cancelar</button>
+        <button class="btn gold" id="confirmOk">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== LEVEL UP ============== -->
+  <div class="levelup" id="levelup">
+    <div class="panel">
+      <h3>Nova Patente</h3>
+      <div class="nm" id="luTitle">O Observador</div>
+      <div class="es" id="luEssence">Você vê tudo, fala pouco, registra tudo.</div>
+      <button class="btn gold" id="luClose">Selar Patente</button>
+    </div>
+  </div>
+
+  <!-- ============== TOASTS ============== -->
+  <div class="toast-wrap" id="toasts"></div>
+
+  <!-- input invisível para import -->
+  <input type="file" id="fileImport" accept="application/json" class="hide" />
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
